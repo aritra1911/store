@@ -1,0 +1,71 @@
+table.current {
+	border-collapse: collapse;
+	padding: 10px;
+}
+
+th.current, td.current {
+	padding: 5px 10px;
+	font-family: Verdana, Arial, sans-serif;
+	color: #1A1A1A;
+	font-size: medium;
+}
+
+td.current {
+	background-color: #1aff53;
+	border-radius: 3px;
+	box-shadow: 3px 3px 2.5px #00661a;
+}
+
+th.current {
+	text-align: right;
+}
+
+table.view, td.viewBody, td.ViewHead {
+   border-collapse: collapse;
+   border: 1px solid black;
+}
+
+td.viewHead {
+	padding: 5px 10px;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: medium;
+	font-weight: bold;
+	text-shadow: 2px 2px 0.5px #004080;
+	color: #FFFFFF;
+	background-color: #0080ff;
+	height: 10px;
+}
+
+td.viewBody {
+	padding: 0px 10px;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: small;
+	color: #1A1A1A;
+}
+
+a:link, a:visited {
+	font-size: small;
+    background-color: #3464f4;
+    color: white;
+    padding: 5px 30px;
+    text-align: center; 
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 3px;
+}
+
+a:hover, a:active {
+    background-color: #3434f4;
+    transition: background-color 0.5s;
+}
+
+h1 {
+	padding: 10px 10px;
+	font-family: Consolas, "Courier New", monospace;
+	border-radius: 5px;
+	background-color: #1a1a1a;
+	color: #1e90ff;
+	width: 100%;
+	text-shadow: 3px 3px 1.5px #0d0d0d;
+	background: linear-gradient(to right, #1a1a1a, #ffffff);
+}
