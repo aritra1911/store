@@ -12,7 +12,7 @@
     $dbName = "storedb";
 
     $id = $_GET["id"];
-    //echo $id . "<br />";
+    $edit = $_GET["edit"];
 
     // Create connection
     $conn = new mysqli($serverName, $userName, $password, $dbName);
@@ -27,14 +27,44 @@
 
     if ($res->num_rows > 0) {
         $row = $res->fetch_assoc();
-        echo '<table class"current" cellspacing="7">';
-        echo '<tr><th class="current">Product Code :</th>';
-        echo '<td class="current">' . $row["prodCode"] . '</td></tr>';
-        echo '<tr><th class="current">Product Name :</th>';
-        echo '<td class="current">' . $row["prodName"] . '</td></tr>';
-        echo '<tr><th class="current">Packing :</th>';
-        echo '<td class="current">' . $row["packing"] . '</td></tr>';
-        echo '</table><br /><br />';
+        if ($edit == 0) {
+            // tables keep everything tidy in a grid and we don't want borders
+            echo '<table class"current" cellspacing="7">';
+            echo '<tr><th class="current">Product Code :</th>';
+            echo '<td class="current">' . $row["prodCode"] . '</td></tr>';
+            echo '<tr><th class="current">Product Name :</th>';
+            echo '<td class="current">' . $row["prodName"] . '</td></tr>';
+            echo '<tr><th class="current">Packing :</th>';
+            echo '<td class="current">' . $row["packing"] . '</td></tr>';
+            echo '</table><br />';
+            echo '<a class="button" href="prod_mast.php?id=' . $id . '&edit=1">Edit</a>';
+            echo '<a class="button" href="prod_mast_update.php?id=' . $id . '&del=1">Delete</a>';
+            echo '<br /><br /><br />';
+        } else {
+            $url = 'prod_mast_update.php?id=' . $id . '&del=0';
+            ?>
+            <form action = "<?php echo $url; ?>" method = "post">
+                <table>
+                    <tr>
+                        <td>Code:</td>
+                        <td><input type="text" name="code" maxlength="5" size="3" value="<?php echo $row['prodCode']; ?>" readonly /></td>
+                    </tr>
+                    <tr>
+                        <td>Name:</td>
+                        <td><input type="text" name="name" maxlength="25" value="<?php echo $row['prodName']; ?>" /></td>
+                    </tr>
+                    <tr>
+                        <td>Packing:</td>
+                        <td><input type="text" name="packing" maxlength="10" value="<?php echo $row['packing']; ?>" /></td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit" name="submit" value="Submit" /></td>
+                        <td><a class="button" href="<?php echo 'prod_mast.php?id=' . $id . '&edit=0'; ?>">Cancel</a></td>
+                    </tr>
+                </table>
+            </form>
+            <?php
+        }
     }
 
     $queryAll = "SELECT * FROM products ORDER BY prodName";
@@ -53,7 +83,7 @@
             echo '<td class="viewBody">' . $row["prodName"] . "</td>";
             echo '<td class="viewBody">' . $row["packing"] . "</td>";
             echo '<td align="center" style="font-family: monospace">';
-            echo '<a href="prod_mast.php?id=' . $row["prodCode"] . '&edit=0">Select</a></td></tr>';
+            echo '<a class="button" href="prod_mast.php?id=' . $row["prodCode"] . '&edit=0">Select</a></td></tr>';
         }
         echo "</table>";
     }

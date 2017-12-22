@@ -11,9 +11,11 @@ th.current, td.current {
 }
 
 td.current {
+	font-family: Verdana, Calibri, Arial, sans-serif;
 	background-color: #1aff53;
 	border-radius: 3px;
 	box-shadow: 3px 3px 2.5px #00661a;
+	color: #0d0d0d;
 }
 
 th.current {
@@ -43,7 +45,7 @@ td.viewBody {
 	color: #1A1A1A;
 }
 
-a:link, a:visited {
+a.button:link, a.button:visited {
 	font-size: small;
     background-color: #3464f4;
     color: white;
@@ -54,7 +56,7 @@ a:link, a:visited {
     border-radius: 3px;
 }
 
-a:hover, a:active {
+a.button:hover, a.button:active {
     background-color: #3434f4;
     transition: background-color 0.5s;
 }
