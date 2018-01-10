@@ -23,9 +23,9 @@
         if ($id > -1)
             echo '<li><a href="prod_mast.php' . "?id=" . $id . '&edit=0">Products Master</a></li>';
         else
-            echo '<li><a href="#">Products Master</a><br />Link unavailable!</li>';
+            echo '<li><a href="#">Products Master</a>&nbsp;(No data!)</li>'; // Relax! It does absolutely nothing.
     ?>
-    <li><a href="prod_add.html">Add Product(s)</a></li>
+    <li><a href="prod_add.php">Add Product(s)</a></li>
 </ul>
 </body>
 </html>
