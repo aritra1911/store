@@ -10,6 +10,7 @@
     $dbName = "storedb";
 
     $id = $_GET["id"];
+    $new_id = $id; // Will need to redirect to another product after deletion
     $edit = $_GET["edit"];
 
     // Create connection
@@ -40,6 +41,18 @@
         }
     }
 
+    // What's worth waiting? Put the bullet in its head.
+    if (isset($_POST['id'])) {
+        if ($conn->query("DELETE FROM products WHERE prodCode='" . $_POST['id'] . "'") === TRUE) {
+            echo mysqli_affected_rows($conn) . ' row(s) of data successfully deleted.';
+            echo '<br />';
+        } else {
+            echo '<font color="#b22222">';
+            echo "Error: " . $query . "<br />" . $conn->error;
+            echo '</font><br />';
+        }
+    }
+
     echo "</div>";
 
     $queryCurrent = "SELECT * FROM products WHERE prodCode=" . $id;
@@ -47,7 +60,8 @@
 
     if ($res->num_rows > 0) {
         $row = $res->fetch_assoc();
-        if ($edit == 0) {
+
+        if ($edit == 0) { // The Readonly Section
             // tables keep everything tidy in a grid but we don't like borders around it
             echo '<table class"current" cellspacing="7">';
             echo '<tr><th class="current">Product Code :</th>';
@@ -59,9 +73,10 @@
             echo '</table><br />';
             echo '<table cellspacing="7"><tr>';
             echo '<td><a class="button" href="prod_mast.php?id=' . $id . '&edit=1">Edit</a></td>';
-            echo '<td><a class="button" href="prod_mast_del.php?id=' . $id . '">Delete</a></td>';
+            echo '<td><a class="button" href="prod_mast.php?id=' . $id . '&edit=-1">Delete</a></td>';
             echo '</tr></table><br /><br />';
-        } else {
+
+        } else if ($edit == 1) { // The Alter Section
             ?>
             <form action = "<?php echo $_SERVER['PHP_SELF']."?id=".$id."&edit=0"; ?>" method = "post">
                 <table>
@@ -84,32 +99,60 @@
                 </table>
             </form>
             <?php
-        }
+
+        } else { // The Good Bye Section
+            $result = $conn->query("SELECT * FROM products WHERE prodCode >= '" . $id . "' LIMIT 2");
+            $row = $result->fetch_assoc();
+            
+            // Time to move on...
+            if ($row = $result->fetch_assoc())
+                $new_id = $row['prodCode']; // get the next one
+            else {
+                $result = $conn->query("SELECT * FROM products ORDER BY prodCode");
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $new_id = $row['prodCode'];
+                } else $new_id = -1;
+            }
+            
+            echo "Are you sure?<br />"
+            ?>
+            <form action = "<?php echo $_SERVER['PHP_SELF']."?id=".$new_id."&edit=0"; ?>" method = "post">
+                <input type="hidden" name="id" value="<?php echo $id ?>" />
+                <input type="submit" name="submit" value="Yes" />
+                <a class="button" href="<?php echo 'prod_mast.php?id=' . $id . '&edit=0'; ?>">Cancel</a>
+            </form>
+            <?php
+        } // End of sections, create some more if you don't consider them useless.
     }
 
-    $queryAll = "SELECT * FROM products ORDER BY prodName";
-    $result = $conn->query($queryAll);
+    if ($edit != -1) { // I hate to show this while the funeral procession
+        $queryAll = "SELECT * FROM products ORDER BY prodName";
+        $result = $conn->query($queryAll);
 
-    if ($result->num_rows > 0) {
-        echo '<table class="view" cellpadding="2">';
-        echo '<tr><td class="viewHead">Code</td>';
-        echo '<td class="viewHead">Product Name</td>';
-        echo '<td class="viewHead">Packing</td>';
-        echo '<td class="viewHead"></td></tr>';
-        // output data of each row
-        while($row = $result->fetch_assoc()) {
-            echo '<tr>';
-            echo '<td class="viewBody">' . $row["prodCode"] . "</td>";
-            echo '<td class="viewBody">' . $row["prodName"] . "</td>";
-            echo '<td class="viewBody">' . $row["packing"] . "</td>";
-            echo '<td align="center" style="font-family: monospace">';
-            echo '<a class="button" href="prod_mast.php?id=' . $row["prodCode"] . '&edit=0">Select</a></td></tr>';
-        }
-        echo "</table>";
-    } else {
-        echo "Nothing to see here. Go try adding a few products first.<br />";
+        if ($result->num_rows > 0) {
+            echo '<table class="view" cellpadding="2">';
+            echo '<tr><td class="viewHead">Code</td>';
+            echo '<td class="viewHead">Product Name</td>';
+            echo '<td class="viewHead">Packing</td>';
+            echo '<td class="viewHead"></td></tr>';
+            // output data of each row
+            while($row = $result->fetch_assoc()) {
+                echo '<tr>';
+                echo '<td class="viewBody">' . $row["prodCode"] . "</td>";
+                echo '<td class="viewBody">' . $row["prodName"] . "</td>";
+                echo '<td class="viewBody">' . $row["packing"] . "</td>";
+                echo '<td align="center" style="font-family: monospace">';
+                echo '<a class="button" href="prod_mast.php?id=' . $row["prodCode"] . '&edit=0">Select</a></td></tr>';
+            }
+            echo "</table>";
+        } else
+            echo "Nothing to see here. Go try adding a few products first.<br />";
+            echo "<br />"; // Take a break
         echo '<a href="index.php">&lt;&lt; Back</a>';
     }
+
+    // Finish it
     $conn->close();
 ?>
 
