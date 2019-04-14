@@ -4,21 +4,26 @@
 </head>
 <body>
 <?php
-    $serverName = "localhost";
-    $userName = "root";
-    $password = "unlockdb";
-    $dbName = "storedb";
+    // $serverName = "localhost";
+    // $userName = "postgres";
+    // $password = "unlockdb";
+    // $dbName = "store";
 
     $id = $_GET["id"];
     $new_id = $id; // Will need to redirect to another product after deletion
     $edit = $_GET["edit"];
 
     // Create connection
-    $conn = new mysqli($serverName, $userName, $password, $dbName);
+    $conn = pg_connect("
+        host=localhost
+        dbname=store
+        user=postgres
+        password=unlockdb
+    ");
 
     // Check connection
-    if ($conn->connect_error)
-        die("Connection failed: " . $conn->connect_error);
+    if (!$conn)
+        die("Error in connection: " . pg_last_error());
 
     ?>
     <!-- Header -->
@@ -37,26 +42,26 @@
         $packing = $_POST['packing'];
 
         // Renew
-        if ($conn->query("UPDATE products SET prodName='" . $name . "', packing='" . $packing ."' WHERE prodCode='" . $code . "'") === TRUE) {
+        if (pg_query($conn, "UPDATE products SET prodName='" . $name . "', packing='" . $packing ."' WHERE prodCode='" . $code . "'")) {
             echo "<font color=\"#008000\">\n";
             echo "<i>Product <b>" . $name . "</b> with code <b>" . $code . "</b> has been successfully updated.</i>\n";
             echo "</font><br />";
         } else {
             echo "<font color=\"#b22222\">\n";
-            echo "<i><b>Error updating product:</b></i><br />" . $query . "<br />" . $conn->error;
+            echo "<i><b>Error updating product:</b></i><br />" . $query . "<br />" . pg_last_error();
             echo "</font><br />\n";
         }
     }
 
     // What's worth waiting? Put the bullet in its head.
     if (isset($_POST['id'])) {
-        if ($conn->query("DELETE FROM products WHERE prodCode='" . $_POST['id'] . "'") === TRUE) {
+        if (pg_query($conn, "DELETE FROM products WHERE prodCode='" . $_POST['id'] . "'") === TRUE) {
             echo '<font color="#b22222"><i><b>';
-            echo mysqli_affected_rows($conn) . '</b> row(s) of data successfully deleted.</i></b>';
+            echo pg_affected_rows($conn) . '</b> row(s) of data successfully deleted.</i></b>';
             echo '</i></font><br />';
         } else {
             echo '<font color="#b22222">';
-            echo "Error: " . $query . "<br />" . $conn->error;
+            echo "Error: " . $query . "<br />" . pg_last_error();
             echo '</font><br />';
         }
     }
@@ -64,11 +69,9 @@
     echo "</div>";
 
     $queryCurrent = "SELECT * FROM products WHERE prodCode=" . $id;
-    $res = $conn->query($queryCurrent);
+    $result = pg_query($conn, $queryCurrent);
 
-    if ($res->num_rows > 0) {
-        $row = $res->fetch_assoc();
-
+    if ($row = pg_fetch_array($result)) {
         if ($edit == 0) { // The Readonly Section
             // tables keep everything tidy in a grid but we don't like borders around it
             echo '<table class"current" cellspacing="7">';
@@ -109,18 +112,16 @@
             <?php
 
         } else { // The Good Bye Section
-            $result = $conn->query("SELECT * FROM products WHERE prodCode >= '" . $id . "' LIMIT 2");
-            $row = $result->fetch_assoc();
+            $result = pg_query($conn, "SELECT * FROM products WHERE prodCode >= '" . $id . "' LIMIT 2");
+            $row = pg_fetch_array($result);
 
             // Time to move on...
-            if ($row = $result->fetch_assoc())
+            if ($row = pg_fetch_array($result))
                 $new_id = $row['prodCode']; // get the next one
             else {
-                $result = $conn->query("SELECT * FROM products ORDER BY prodCode");
-                if ($result->num_rows > 0) {
-                    $row = $result->fetch_assoc();
-                    $new_id = $row['prodCode'];
-                } else $new_id = -1;
+                $result = pg_query($conn, "SELECT * FROM products ORDER BY prodCode");
+                if ($row = pg_fetch_array($result)) $new_id = $row['prodCode'];
+                else $new_id = -1;
             }
 
             echo "Are you sure?<br />"
@@ -136,16 +137,16 @@
 
     if ($edit != -1) { // I hate to show this while the funeral procession
         $queryAll = "SELECT * FROM products ORDER BY prodName";
-        $result = $conn->query($queryAll);
+        $result = pg_query($conn, $queryAll);
 
-        if ($result->num_rows > 0) {
+        if ($result) {
             echo '<table class="view" cellpadding="2">';
             echo '<tr><td class="viewHead">Code</td>';
             echo '<td class="viewHead">Product Name</td>';
             echo '<td class="viewHead">Packing</td>';
             echo '<td class="viewHead"></td></tr>';
             // output data of each row
-            while($row = $result->fetch_assoc()) {
+            while($row = pg_fetch_array($result)) {
                 echo '<tr>';
                 echo '<td class="viewBody">' . $row["prodCode"] . "</td>";
                 echo '<td class="viewBody">' . $row["prodName"] . "</td>";
@@ -165,10 +166,11 @@
             <i class="arrow"></i>
         </div>
         <?php
+        pg_free_result($result);
     }
 
     // Finish it
-    $conn->close();
+    pg_close($conn);
 ?>
 
 </body>

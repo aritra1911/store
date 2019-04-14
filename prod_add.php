@@ -7,16 +7,17 @@
 </head>
 <body>
     <?php
-        $sv = "localhost";
-        $un = "root";
-        $pass = "unlockdb";
-        $db = "storedb";
-
-        $conn = new mysqli($sv, $un, $pass, $db); // Establish a conne-ction
+        // Establish a conne-ction
+        $conn = pg_connect("
+            host=localhost
+            dbname=store
+            user=postgres
+            password=unlockdb
+        ");
 
         // Check connection
-        if ($conn->connect_error)
-            die("Connection failed: " . $conn->connect_error);
+        if (!$conn)
+            die("Error in connection: " . pg_last_error());
 
         // Update when data is posted
         if (isset($_POST['code']) && isset($_POST['name']) && isset($_POST['code'])) {
@@ -28,13 +29,13 @@
                 VALUES ('" . $_POST['code'] . "', '" . $_POST['name'] . "', '" . $_POST['packing'] . "');";
 
             // Try adding the data
-            if ($conn->query($query) === TRUE) {
+            if (pg_query($conn, $query)) {
                 echo "<font color=\"#008000\">\n";
                 echo "<i>Product <b>" . $name . "</b> with code <b>" . $code . "</b> has been successfully added.</i>\n";
                 echo "</font><br />";
             } else {
                 echo "<font color=\"#b22222\">\n";
-                echo "<i><b>Error adding product:</b></i><br />" . $query . "<br />" . $conn->error;
+                echo "<i><b>Error adding product:</b></i><br />" . $query . "<br />" . pg_last_error();
                 echo "</font><br />\n";
             }
         }
@@ -45,12 +46,10 @@
                 <td>Code:</td>
                 <?php
                     // Get the last product code
-                    $result = $conn->query("SELECT * FROM products ORDER BY prodCode DESC");
+                    $result = pg_query($conn, "SELECT * FROM products ORDER BY prodCode DESC");
                     $id = -1;
-                    if ($result->num_rows > 0) {
-                        $row = $result->fetch_assoc();
+                    if ($row = pg_fetch_array($result))
                         $id = $row['prodCode'];
-                    }
 
                     // Suggest a suitable product code
                     if ($id == -1)
@@ -75,5 +74,9 @@
         </table>
     </form>
     <a href="index.php">&lt;&lt; Back</a>
+    <?php
+        pg_free_result($result);  // free memory
+        pg_close($conn);  // close connection
+    ?>
 </body>
 </html>

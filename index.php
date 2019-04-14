@@ -1,14 +1,12 @@
 <?php
-    $conn = new mysqli("localhost", "root", "unlockdb", "storedb");
-    if ($conn->connect_error)
-        die("Connection failed! " . $conn->connect_error);
+    $conn = pg_connect("host=localhost dbname=store user=postgres password=unlockdb");
+    if (!$conn)
+        die("Error in connection: " . pg_last_error());
     $sql = "SELECT * FROM products ORDER BY prodCode LIMIT 1";
-    $result = $conn->query($sql);
+    $result = ph_query($conn, $sql);
     $id = -1; // Assuming a default bad value
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
+    if ($row = pg_fetch_array($result))
         $id = $row["prodCode"];
-    }
 ?>
 <html>
 <head>
@@ -27,5 +25,9 @@
     ?>
     <li><a href="prod_add.php">Add Product(s)</a></li>
 </ul>
+<?php
+    pg_free_result($result);  // free memory
+    pg_close($conn);  // close connection
+?>
 </body>
 </html>
