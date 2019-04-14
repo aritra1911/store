@@ -49,7 +49,7 @@
                     $result = pg_query($conn, "SELECT * FROM products ORDER BY prodCode DESC");
                     $id = -1;
                     if ($row = pg_fetch_array($result))
-                        $id = $row['prodCode'];
+                        $id = $row[0];
 
                     // Suggest a suitable product code
                     if ($id == -1)

@@ -1,12 +1,17 @@
 <?php
-    $conn = pg_connect("host=localhost dbname=store user=postgres password=unlockdb");
+    $conn = pg_connect("
+        host=localhost
+        dbname=store
+        user=postgres
+        password=unlockdb
+    ");
     if (!$conn)
         die("Error in connection: " . pg_last_error());
     $sql = "SELECT * FROM products ORDER BY prodCode LIMIT 1";
-    $result = ph_query($conn, $sql);
+    $result = pg_query($conn, $sql);
     $id = -1; // Assuming a default bad value
     if ($row = pg_fetch_array($result))
-        $id = $row["prodCode"];
+        $id = $row[0];
 ?>
 <html>
 <head>

@@ -55,9 +55,10 @@
 
     // What's worth waiting? Put the bullet in its head.
     if (isset($_POST['id'])) {
-        if (pg_query($conn, "DELETE FROM products WHERE prodCode='" . $_POST['id'] . "'") === TRUE) {
+        $query = "DELETE FROM products WHERE prodCode='" . $_POST['id'] . "'";
+        if ($result = pg_query($conn, $query)) {
             echo '<font color="#b22222"><i><b>';
-            echo pg_affected_rows($conn) . '</b> row(s) of data successfully deleted.</i></b>';
+            echo pg_affected_rows($result) . '</b> row(s) of data successfully deleted.</i></b>';
             echo '</i></font><br />';
         } else {
             echo '<font color="#b22222">';
@@ -76,11 +77,11 @@
             // tables keep everything tidy in a grid but we don't like borders around it
             echo '<table class"current" cellspacing="7">';
             echo '<tr><th class="current">Product Code :</th>';
-            echo '<td class="current">' . $row["prodCode"] . '</td></tr>';
+            echo '<td class="current">' . $row[0] . '</td></tr>';
             echo '<tr><th class="current">Product Name :</th>';
-            echo '<td class="current">' . $row["prodName"] . '</td></tr>';
+            echo '<td class="current">' . $row[1] . '</td></tr>';
             echo '<tr><th class="current">Packing :</th>';
-            echo '<td class="current">' . $row["packing"] . '</td></tr>';
+            echo '<td class="current">' . $row[2] . '</td></tr>';
             echo '</table><br />';
             echo '<table cellspacing="7"><tr>';
             echo '<td><a class="button" href="prod_mast.php?id=' . $id . '&edit=1">EDIT</a></td>';
@@ -93,15 +94,15 @@
                 <table>
                     <tr>
                         <td>Code:</td>
-                        <td><input type="text" name="code" maxlength="5" size="3" value="<?php echo $row['prodCode']; ?>" readonly /></td>
+                        <td><input type="text" name="code" maxlength="5" size="3" value="<?php echo $row[0]; ?>" readonly /></td>
                     </tr>
                     <tr>
                         <td>Name:</td>
-                        <td><input type="text" name="name" maxlength="25" size="20" value="<?php echo $row['prodName']; ?>" /></td>
+                        <td><input type="text" name="name" maxlength="25" size="20" value="<?php echo $row[1]; ?>" /></td>
                     </tr>
                     <tr>
                         <td>Packing:</td>
-                        <td><input type="text" name="packing" maxlength="10" value="<?php echo $row['packing']; ?>" /></td>
+                        <td><input type="text" name="packing" maxlength="10" value="<?php echo $row[2]; ?>" /></td>
                     </tr>
                     <tr>
                         <td><input type="submit" name="submit" value="UPDATE" /></td>
@@ -117,10 +118,10 @@
 
             // Time to move on...
             if ($row = pg_fetch_array($result))
-                $new_id = $row['prodCode']; // get the next one
+                $new_id = $row[0]; // get the next one
             else {
                 $result = pg_query($conn, "SELECT * FROM products ORDER BY prodCode");
-                if ($row = pg_fetch_array($result)) $new_id = $row['prodCode'];
+                if ($row = pg_fetch_array($result)) $new_id = $row[0];
                 else $new_id = -1;
             }
 
@@ -148,11 +149,11 @@
             // output data of each row
             while($row = pg_fetch_array($result)) {
                 echo '<tr>';
-                echo '<td class="viewBody">' . $row["prodCode"] . "</td>";
-                echo '<td class="viewBody">' . $row["prodName"] . "</td>";
-                echo '<td class="viewBody">' . $row["packing"] . "</td>";
+                echo '<td class="viewBody">' . $row[0] . "</td>";
+                echo '<td class="viewBody">' . $row[1] . "</td>";
+                echo '<td class="viewBody">' . $row[2] . "</td>";
                 echo '<td align="center">';
-                echo '<a class="button" href="prod_mast.php?id=' . $row["prodCode"] . '&edit=0">SELECT</a></td></tr>';
+                echo '<a class="button" href="prod_mast.php?id=' . $row[0] . '&edit=0">SELECT</a></td></tr>';
             }
             echo "</table>";
         } else
@@ -166,8 +167,8 @@
             <i class="arrow"></i>
         </div>
         <?php
-        pg_free_result($result);
     }
+    pg_free_result($result);
 
     // Finish it
     pg_close($conn);
