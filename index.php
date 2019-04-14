@@ -1,7 +1,7 @@
 <?php
     $conn = new mysqli("localhost", "root", "unlockdb", "storedb");
     if ($conn->connect_error)
-        die("Connection failed!" . $conn->connect_error);
+        die("Connection failed! " . $conn->connect_error);
     $sql = "SELECT * FROM products ORDER BY prodCode LIMIT 1";
     $result = $conn->query($sql);
     $id = -1; // Assuming a default bad value

@@ -19,9 +19,16 @@
     // Check connection
     if ($conn->connect_error)
         die("Connection failed: " . $conn->connect_error);
-    //echo "<font color=\"#008000\">Connection successful.</font>";
 
-    echo "<div><h1>PRODUCT MASTER</h1>";
+    ?>
+    <!-- Header -->
+    <div class="header">
+        PRODUCT MASTER
+    </div>
+    <?php
+
+    // Message Box
+    echo "<div>";
 
     // Update if edit submission is pending
     if (isset($_POST['code']) && isset($_POST['name']) && isset($_POST['code'])) {
@@ -44,8 +51,9 @@
     // What's worth waiting? Put the bullet in its head.
     if (isset($_POST['id'])) {
         if ($conn->query("DELETE FROM products WHERE prodCode='" . $_POST['id'] . "'") === TRUE) {
-            echo mysqli_affected_rows($conn) . ' row(s) of data successfully deleted.';
-            echo '<br />';
+            echo '<font color="#b22222"><i><b>';
+            echo mysqli_affected_rows($conn) . '</b> row(s) of data successfully deleted.</i></b>';
+            echo '</i></font><br />';
         } else {
             echo '<font color="#b22222">';
             echo "Error: " . $query . "<br />" . $conn->error;
@@ -72,8 +80,8 @@
             echo '<td class="current">' . $row["packing"] . '</td></tr>';
             echo '</table><br />';
             echo '<table cellspacing="7"><tr>';
-            echo '<td><a class="button" href="prod_mast.php?id=' . $id . '&edit=1">Edit</a></td>';
-            echo '<td><a class="button" href="prod_mast.php?id=' . $id . '&edit=-1">Delete</a></td>';
+            echo '<td><a class="button" href="prod_mast.php?id=' . $id . '&edit=1">EDIT</a></td>';
+            echo '<td><a class="button" href="prod_mast.php?id=' . $id . '&edit=-1">DELETE</a></td>';
             echo '</tr></table><br /><br />';
 
         } else if ($edit == 1) { // The Alter Section
@@ -93,8 +101,8 @@
                         <td><input type="text" name="packing" maxlength="10" value="<?php echo $row['packing']; ?>" /></td>
                     </tr>
                     <tr>
-                        <td><input type="submit" name="submit" value="Update" /></td>
-                        <td><a class="button" href="<?php echo 'prod_mast.php?id=' . $id . '&edit=0'; ?>">Cancel</a></td>
+                        <td><input type="submit" name="submit" value="UPDATE" /></td>
+                        <td><a class="button" href="<?php echo 'prod_mast.php?id=' . $id . '&edit=0'; ?>">CANCEL</a></td>
                     </tr>
                 </table>
             </form>
@@ -103,7 +111,7 @@
         } else { // The Good Bye Section
             $result = $conn->query("SELECT * FROM products WHERE prodCode >= '" . $id . "' LIMIT 2");
             $row = $result->fetch_assoc();
-            
+
             // Time to move on...
             if ($row = $result->fetch_assoc())
                 $new_id = $row['prodCode']; // get the next one
@@ -114,7 +122,7 @@
                     $new_id = $row['prodCode'];
                 } else $new_id = -1;
             }
-            
+
             echo "Are you sure?<br />"
             ?>
             <form action = "<?php echo $_SERVER['PHP_SELF']."?id=".$new_id."&edit=0"; ?>" method = "post">
@@ -142,14 +150,21 @@
                 echo '<td class="viewBody">' . $row["prodCode"] . "</td>";
                 echo '<td class="viewBody">' . $row["prodName"] . "</td>";
                 echo '<td class="viewBody">' . $row["packing"] . "</td>";
-                echo '<td align="center" style="font-family: monospace">';
-                echo '<a class="button" href="prod_mast.php?id=' . $row["prodCode"] . '&edit=0">Select</a></td></tr>';
+                echo '<td align="center">';
+                echo '<a class="button" href="prod_mast.php?id=' . $row["prodCode"] . '&edit=0">SELECT</a></td></tr>';
             }
             echo "</table>";
         } else
             echo "Nothing to see here. Go try adding a few products first.<br />";
-            echo "<br />"; // Take a break
+        echo "<br />"; // Take a break
         echo '<a href="index.php">&lt;&lt; Back</a>';
+        ?>
+        <br />
+        <br />
+        <div>
+            <i class="arrow"></i>
+        </div>
+        <?php
     }
 
     // Finish it

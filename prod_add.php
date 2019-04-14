@@ -18,6 +18,7 @@
         if ($conn->connect_error)
             die("Connection failed: " . $conn->connect_error);
 
+        // Update when data is posted
         if (isset($_POST['code']) && isset($_POST['name']) && isset($_POST['code'])) {
             $code = $_POST['code'];
             $name = $_POST['name'];
@@ -55,7 +56,7 @@
                     if ($id == -1)
                         echo '<td><input type="text" name="code" maxlength="5" size="3" value="1" /></td>';
                     else
-                        echo '<td><input type="text" name="code" maxlength="5" size="3" value="' . ($id + 1) . '" /></td>';                    
+                        echo '<td><input type="text" name="code" maxlength="5" size="3" value="' . ($id + 1) . '" /></td>';
                 ?>
             </tr>
             <tr>
@@ -67,10 +68,12 @@
                 <td><input type="text" name="packing" maxlength="10" /></td>
             </tr>
             <tr>
-                <td><input id="add" type="submit" name="submit" value="Submit" /></td>
-                <td><a href="index.php">You may even wanna take a step back</a></td>
+                <td><input id="add" type="submit" name="submit" value="ADD" /></td>
+                <td><input id="reset" type="reset" name="reset" value="CLEAR" /></td>
+                <!--<td><a class="cbutton" href="index.php">Cancel</a></td>-->
             </tr>
         </table>
     </form>
+    <a href="index.php">&lt;&lt; Back</a>
 </body>
 </html>

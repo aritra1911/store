@@ -12,10 +12,10 @@ th.current, td.current {
 
 td.current {
     font-family: Verdana, Calibri, Arial, sans-serif;
-    background-color: #1aff53;
+    background-color: #4caf50;
     border-radius: 3px;
-    box-shadow: 3px 3px 2.5px #00661a;
-    color: #0d0d0d;
+    box-shadow: 3px 3px 2.5px #1f4720;
+    color: #ffffff;
 }
 
 th.current {
@@ -31,10 +31,9 @@ td.viewHead {
     padding: 5px 10px;
     font-family: Verdana, Arial, sans-serif;
     font-size: medium;
-    font-weight: bold;
-    text-shadow: 2px 2px 0.5px #004080;
-    color: #FFFFFF;
-    background-color: #0080ff;
+    font-variant: small-caps;
+    color: #0080ff;
+    background-color: #1a1a1a;
     height: 10px;
 }
 
@@ -45,20 +44,39 @@ td.viewBody {
     color: #1A1A1A;
 }
 
-a.button:link, a.button:visited {
-    font-size: small;
+a.button:link, a.button:visited, input[type=submit] {
+    font-family: Calibri, Verdana, Arial, sans-serif;
+    font-size: 8pt;
+    letter-spacing: 1.1px;
     background-color: #3464f4;
+    border: 0;
     color: white;
-    padding: 5px 30px;
-    text-align: center; 
+    box-shadow: 2px 2px 5px #666666;
+    transition: background-color 0.2s ease-in,
+                color 0.2s ease-in,
+                box-shadow 0.2s ease-in;
+    padding: 6px 40px;
+    text-align: center;
     text-decoration: none;
     display: inline-block;
-    border-radius: 3px;
+    border-radius: 2px;
 }
 
-a.button:hover, a.button:active {
-    background-color: #3434f4;
-    transition: background-color 0.5s;
+a.button:hover, input[type=submit]:hover {
+    background-color: #1a1a1a;
+    color: #2160ff;
+    box-shadow: 3px 3px 3px #666666;
+    transition: background-color 0.2s ease-in,
+                color 0.2s ease-in,
+                box-shadow 0.2s ease-in;
+    cursor:pointer;
+}
+
+a.button:active, input[type=submit]:active {
+    background-color: #ffffff;
+    color: #3464f4;
+    transition: background-color 0.1s ease-in,
+                color 0.1s ease-in;
 }
 
 h1 {
@@ -67,7 +85,30 @@ h1 {
     border-radius: 5px;
     background-color: #1a1a1a;
     color: #1e90ff;
-    width: 100%;
+    width: 90%;
     text-shadow: 3px 3px 1.5px #0d0d0d;
     background: linear-gradient(to right, #1a1a1a, #ffffff);
+}
+
+div.header {
+    padding: 10px 10px;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 12pt;
+    border-radius: 2px;
+    background-color: #1a1a1a;
+    color: #1e90ff;
+    width: 98.5%;
+    text-shadow: 3px 3px 1.5px #0d0d0d;
+    //background: linear-gradient(to right, #1a1a1a, #ffffff);
+}
+
+i.arrow {
+    height:25px;
+    width:25px;
+    border: solid black;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
 }
